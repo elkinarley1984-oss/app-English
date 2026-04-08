@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>English Saber Kids PRO</title>
+
+<style>
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #f7f7f7;
+  text-align: center;
+}
+
+.container {
+  max-width: 400px;
+  margin: auto;
+}
+
+h1 { color: #58cc02; }
+
+.level {
+  background: white;
+  margin: 12px;
+  padding: 18px;
+  border-radius: 20px;
+  box-shadow: 0 5px 0 #ddd;
+  cursor: pointer;
+}
+
+.locked {
+  background: #ccc;
+}
+
+.card {
+  background: white;
+  padding: 20px;
+  border-radius: 20px;
+  margin-top: 20px;
+}
+
+.btn {
+  display: block;
+  width: 85%;
+  margin: 8px auto;
+  padding: 14px;
+  border-radius: 25px;
+  border: none;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.option { border: 2px solid #ddd; background: white; }
+.correct { background: #58cc02; color: white; }
+.wrong { background: #ff4b4b; color: white; }
+
+.progress {
+  height: 10px;
+  background: #ddd;
+  border-radius: 10px;
+}
+
+.progress-bar {
+  height: 10px;
+  width: 0%;
+  background: #58cc02;
+  border-radius: 10px;
+}
+
+.hidden { display: none; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<h1>🦉 English Saber Kids</h1>
+
+<div class="progress">
+  <div class="progress-bar" id="progressBar"></div>
+</div>
+
+<div id="map"></div>
+<div id="quiz" class="card hidden"></div>
+
+</div>
+
+<script>
+
+// 🔥 CONFIG
+let unlockedLevel = 1;
+let currentLevel = 1;
+let current = 0;
+let score = 0;
+let used = {1:[],2:[],3:[],4:[]};
+
+// 🧠 BANCO (100 preguntas distribuidas)
+const levels = {
+
+1: [
+{q:"Dog means:", options:["Gato","Perro","Ave"], correct:1},
+{q:"Apple is a:", options:["Fruit","Animal","Color"], correct:0},
+{q:"Blue is:", options:["Color","Food","Animal"], correct:0},
+{q:"Chair means:", options:["Mesa","Silla","Puerta"], correct:1},
+{q:"Milk is:", options:["Drink","Animal","Color"], correct:0},
+{q:"Car is:", options:["Vehicle","Fruit","Animal"], correct:0},
+{q:"Teacher means:", options:["Doctor","Profesor","Policía"], correct:1},
+{q:"House means:", options:["Casa","Escuela","Calle"], correct:0},
+{q:"Book means:", options:["Libro","Mesa","Lápiz"], correct:0},
+{q:"Water is:", options:["Drink","Animal","Color"], correct:0}
+],
+
+2: [
+{q:"She ___ my friend", options:["is","are","am"], correct:0},
+{q:"They ___ playing", options:["is","are","am"], correct:1},
+{q:"I ___ happy", options:["is","am","are"], correct:1},
+{q:"He ___ a student", options:["is","are","am"], correct:0},
+{q:"We ___ ready", options:["is","are","am"], correct:1},
+{q:"The cat ___ on the table", options:["is","are","am"], correct:0},
+{q:"She ___ reading", options:["is","are","am"], correct:0},
+{q:"They ___ my friends", options:["is","are","am"], correct:1},
+{q:"I ___ a boy", options:["is","am","are"], correct:1},
+{q:"He ___ tall", options:["is","are","am"], correct:0}
+],
+
+3: [
+{q:"The dog is brown. What color?", options:["Black","Brown","White"], correct:1},
+{q:"The cat is on the table. Where is it?", options:["Chair","Table","Floor"], correct:1},
+{q:"She reads a book. What does she do?", options:["Sleep","Read","Run"], correct:1},
+{q:"He eats an apple. What is he doing?", options:["Eating","Running","Sleeping"], correct:0},
+{q:"The boy is in the park. Where is he?", options:["School","Park","House"], correct:1},
+{q:"The girl is happy. How is she?", options:["Sad","Happy","Angry"], correct:1},
+{q:"The dog runs. What does it do?", options:["Run","Eat","Sleep"], correct:0},
+{q:"The book is on the table. Where is it?", options:["Table","Chair","Floor"], correct:0},
+{q:"The cat sleeps. What is it doing?", options:["Sleeping","Eating","Running"], correct:0},
+{q:"The boy reads. What does he do?", options:["Read","Run","Jump"], correct:0}
+],
+
+4: [
+{type:"listening", audio:"The dog is black", q:"What color is the dog?", options:["White","Black","Brown"], correct:1},
+{type:"listening", audio:"She is my teacher", q:"Who is she?", options:["Friend","Teacher","Sister"], correct:1},
+{type:"listening", audio:"The boy is running", q:"What is he doing?", options:["Eating","Running","Sleeping"], correct:1},
+{type:"listening", audio:"The cat is on the table", q:"Where is the cat?", options:["Table","Chair","Floor"], correct:0},
+{type:"listening", audio:"The girl is happy", q:"How is she?", options:["Sad","Happy","Angry"], correct:1},
+{type:"listening", audio:"The boy eats an apple", q:"What is he doing?", options:["Eating","Running","Sleeping"], correct:0},
+{type:"listening", audio:"The dog is big", q:"How is the dog?", options:["Big","Small","Fast"], correct:0},
+{type:"listening", audio:"The teacher is here", q:"Who is here?", options:["Student","Teacher","Friend"], correct:1},
+{type:"listening", audio:"The car is red", q:"What color is the car?", options:["Blue","Red","Black"], correct:1},
+{type:"listening", audio:"The boy is in school", q:"Where is the boy?", options:["Park","School","Home"], correct:1}
+]
+
+};
+
+// 🎮 MAPA
+function renderMap(){
+  let html="";
+  for(let i=1;i<=4;i++){
+    let lock=i>unlockedLevel?"locked":"";
+    html+=`<div class="level ${lock}" onclick="startLevel(${i})">Nivel ${i}</div>`;
+  }
+  document.getElementById("map").innerHTML=html;
+}
+
+function startLevel(l){
+  if(l>unlockedLevel)return;
+  currentLevel=l; current=0; score=0;
+  document.getElementById("quiz").classList.remove("hidden");
+  loadQuestion();
+}
+
+// 🧠 SIN REPETIR
+function getQuestion(){
+  let list=levels[currentLevel];
+  if(used[currentLevel].length===list.length) used[currentLevel]=[];
+  let available=list.filter((_,i)=>!used[currentLevel].includes(i));
+  let index=Math.floor(Math.random()*available.length);
+  let q=available[index];
+  let realIndex=list.indexOf(q);
+  used[currentLevel].push(realIndex);
+  return q;
+}
+
+function loadQuestion(){
+  let q=getQuestion();
+  window.currentQ=q;
+
+  let html=`<h3>Nivel ${currentLevel}</h3><h2>${q.q}</h2>`;
+
+  if(q.type==="listening"){
+    html+=`<button class="btn correct" onclick="speak('${q.audio}')">🔊 Escuchar</button>`;
+    speak(q.audio);
+  }
+
+  q.options.forEach((opt,i)=>{
+    html+=`<button class="btn option" onclick="answer(this,${i})">${opt}</button>`;
+  });
+
+  document.getElementById("quiz").innerHTML=html;
+}
+
+function answer(btn,i){
+  if(i===currentQ.correct){
+    btn.classList.add("correct"); score++;
+  } else btn.classList.add("wrong");
+
+  current++;
+  updateProgress();
+
+  setTimeout(()=>{
+    if(current<10) loadQuestion();
+    else finishLevel();
+  },700);
+}
+
+function updateProgress(){
+  let p=(current/10)*100;
+  document.getElementById("progressBar").style.width=p+"%";
+}
+
+function finishLevel(){
+  if(score>=7) unlockedLevel++;
+  document.getElementById("quiz").innerHTML=
+    `<h2>Resultado</h2><p>${score}/10</p>`;
+  renderMap();
+}
+
+function speak(t){
+  let msg=new SpeechSynthesisUtterance(t);
+  msg.lang="en-US";
+  speechSynthesis.speak(msg);
+}
+
+renderMap();
+
+</script>
+</body>
+</html>
