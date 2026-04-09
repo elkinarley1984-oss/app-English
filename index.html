@@ -1,237 +1,980 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>English Saber Kids PRO</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 
 <style>
+:root {
+  --green: #58cc02;
+  --green-dark: #46a302;
+  --green-shadow: #3e8c00;
+  --red: #ff4b4b;
+  --red-dark: #cc3333;
+  --blue: #1cb0f6;
+  --blue-dark: #0e8ec7;
+  --yellow: #ffc800;
+  --yellow-dark: #cc9e00;
+  --purple: #ce82ff;
+  --bg: #f0faf0;
+  --card: #ffffff;
+  --text: #3c3c3c;
+  --gray: #e5e5e5;
+  --gray2: #afafaf;
+  --radius: 18px;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
 body {
-  font-family: 'Segoe UI', sans-serif;
-  background: #f7f7f7;
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  min-height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 0 0 env(safe-area-inset-bottom) 0;
+  overflow-x: hidden;
+}
+
+/* ---- SCREENS ---- */
+.screen { display: none; width: 100%; max-width: 440px; padding: 20px 16px; flex-direction: column; align-items: center; }
+.screen.active { display: flex; }
+
+/* ---- LOGIN ---- */
+#loginScreen {
+  justify-content: center;
+  min-height: 100dvh;
+  background: linear-gradient(160deg, #58cc02 0%, #46a302 40%, #1cb0f6 100%);
+  max-width: 100%;
+}
+
+.login-card {
+  background: white;
+  border-radius: 28px;
+  padding: 36px 28px;
+  width: 100%;
+  max-width: 380px;
+  box-shadow: 0 8px 40px rgba(0,0,0,0.18);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+
+.logo-owl {
+  font-size: 72px;
+  line-height: 1;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));
+  animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
+}
+
+.login-title {
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--green);
+  text-align: center;
+  line-height: 1.1;
+}
+
+.login-sub {
+  font-size: 15px;
+  color: var(--gray2);
+  text-align: center;
+  font-weight: 700;
+}
+
+.name-input {
+  width: 100%;
+  padding: 16px 20px;
+  border: 3px solid var(--gray);
+  border-radius: var(--radius);
+  font-size: 18px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 700;
+  color: var(--text);
+  outline: none;
+  transition: border-color 0.2s;
   text-align: center;
 }
 
-.container {
-  max-width: 400px;
-  margin: auto;
+.name-input:focus { border-color: var(--green); }
+.name-input::placeholder { color: #ccc; font-weight: 700; }
+
+.btn-start {
+  width: 100%;
+  padding: 18px;
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 20px;
+  font-weight: 900;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--green-shadow);
+  transition: transform 0.1s, box-shadow 0.1s;
+  letter-spacing: 0.5px;
 }
 
-h1 { color: #58cc02; }
+.btn-start:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--green-shadow); }
 
-.level {
-  background: white;
-  margin: 12px;
-  padding: 18px;
+/* ---- MAP SCREEN ---- */
+#mapScreen { min-height: 100dvh; gap: 12px; padding-top: 24px; }
+
+.top-bar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.greeting {
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--text);
+}
+
+.xp-badge {
+  background: var(--yellow);
+  color: #7a5500;
+  font-weight: 900;
+  font-size: 14px;
+  padding: 6px 14px;
   border-radius: 20px;
+  box-shadow: 0 3px 0 var(--yellow-dark);
+}
+
+.section-title {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--gray2);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  align-self: flex-start;
+  margin-top: 8px;
+}
+
+.level-card {
+  width: 100%;
+  background: white;
+  border-radius: 20px;
+  padding: 20px 22px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
   box-shadow: 0 5px 0 #ddd;
   cursor: pointer;
+  transition: transform 0.1s, box-shadow 0.1s;
+  border: 3px solid transparent;
+  position: relative;
+  overflow: hidden;
 }
 
-.locked {
-  background: #ccc;
+.level-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #ddd; }
+.level-card.current { border-color: var(--green); }
+
+.level-card.locked {
+  background: #f2f2f2;
+  cursor: not-allowed;
+  box-shadow: 0 5px 0 #ccc;
 }
 
-.card {
-  background: white;
-  padding: 20px;
-  border-radius: 20px;
-  margin-top: 20px;
+.level-icon {
+  font-size: 40px;
+  min-width: 50px;
+  text-align: center;
 }
 
-.btn {
-  display: block;
-  width: 85%;
-  margin: 8px auto;
-  padding: 14px;
-  border-radius: 25px;
+.level-info { flex: 1; }
+.level-name { font-size: 17px; font-weight: 900; color: var(--text); }
+.level-desc { font-size: 13px; color: var(--gray2); font-weight: 700; margin-top: 2px; }
+
+.stars-row { display: flex; gap: 3px; margin-top: 6px; }
+.star { font-size: 18px; }
+
+.lock-icon { font-size: 28px; color: #ccc; }
+
+.level-card.locked .level-name { color: #bbb; }
+.level-card.locked .level-desc { color: #ccc; }
+
+/* ---- QUIZ SCREEN ---- */
+#quizScreen { min-height: 100dvh; gap: 14px; padding-top: 20px; }
+
+.quiz-header {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.close-btn {
+  background: var(--gray);
   border: none;
-  font-size: 15px;
+  border-radius: 50%;
+  width: 40px; height: 40px;
+  font-size: 20px;
   cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
 }
 
-.option { border: 2px solid #ddd; background: white; }
-.correct { background: #58cc02; color: white; }
-.wrong { background: #ff4b4b; color: white; }
-
-.progress {
-  height: 10px;
-  background: #ddd;
+.progress-track {
+  flex: 1;
+  height: 16px;
+  background: var(--gray);
   border-radius: 10px;
+  overflow: hidden;
 }
 
-.progress-bar {
-  height: 10px;
+.progress-fill {
+  height: 100%;
+  background: var(--green);
+  border-radius: 10px;
+  transition: width 0.4s ease;
   width: 0%;
-  background: #58cc02;
-  border-radius: 10px;
 }
 
-.hidden { display: none; }
+.hearts { font-size: 20px; letter-spacing: 2px; flex-shrink: 0; }
+
+.question-card {
+  width: 100%;
+  background: white;
+  border-radius: 24px;
+  padding: 26px 22px;
+  box-shadow: 0 5px 0 #ddd;
+  min-height: 140px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  text-align: center;
+}
+
+.q-badge {
+  background: var(--blue);
+  color: white;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 12px;
+  border-radius: 20px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.q-text {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--text);
+  line-height: 1.3;
+}
+
+.listen-btn {
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 16px;
+  padding: 14px 28px;
+  font-size: 17px;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 4px 0 var(--blue-dark);
+  transition: transform 0.1s, box-shadow 0.1s;
+  display: flex; align-items: center; gap: 8px;
+}
+.listen-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--blue-dark); }
+
+.options-grid {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-btn {
+  width: 100%;
+  padding: 17px 20px;
+  background: white;
+  border: 3px solid var(--gray);
+  border-radius: var(--radius);
+  font-size: 17px;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  color: var(--text);
+  cursor: pointer;
+  transition: all 0.15s;
+  text-align: left;
+  display: flex; align-items: center; gap: 12px;
+}
+
+.option-btn:active { transform: scale(0.98); }
+
+.option-btn.correct {
+  background: #d7ffb8;
+  border-color: var(--green);
+  color: var(--green-dark);
+}
+
+.option-btn.wrong {
+  background: #ffd8d8;
+  border-color: var(--red);
+  color: var(--red-dark);
+}
+
+.option-btn.disabled { pointer-events: none; }
+
+.opt-letter {
+  width: 30px; height: 30px;
+  background: var(--gray);
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px;
+  font-weight: 900;
+  flex-shrink: 0;
+}
+
+.option-btn.correct .opt-letter { background: var(--green); color: white; }
+.option-btn.wrong .opt-letter { background: var(--red); color: white; }
+
+.feedback-bar {
+  width: 100%;
+  border-radius: var(--radius);
+  padding: 16px 20px;
+  display: none;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.feedback-bar.show { display: flex; }
+.feedback-bar.ok { background: #d7ffb8; border: 2px solid var(--green); }
+.feedback-bar.fail { background: #ffd8d8; border: 2px solid var(--red); }
+
+.feedback-title { font-size: 17px; font-weight: 900; }
+.feedback-bar.ok .feedback-title { color: var(--green-dark); }
+.feedback-bar.fail .feedback-title { color: var(--red-dark); }
+
+.feedback-sub { font-size: 14px; font-weight: 700; color: #666; }
+
+/* ---- RESULT SCREEN ---- */
+#resultScreen { min-height: 100dvh; justify-content: center; gap: 20px; }
+
+.result-owl { font-size: 80px; animation: bounce 1.5s infinite; }
+
+.result-title {
+  font-size: 30px; font-weight: 900; color: var(--text); text-align: center;
+}
+
+.result-score-ring {
+  width: 140px; height: 140px;
+  border-radius: 50%;
+  background: conic-gradient(var(--green) 0deg, var(--gray) 0deg);
+  display: flex; align-items: center; justify-content: center;
+  position: relative;
+}
+
+.result-score-inner {
+  width: 110px; height: 110px;
+  background: white;
+  border-radius: 50%;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+}
+
+.score-num { font-size: 36px; font-weight: 900; color: var(--text); line-height: 1; }
+.score-denom { font-size: 14px; color: var(--gray2); font-weight: 700; }
+
+.result-msg {
+  font-size: 17px; font-weight: 800; color: #555; text-align: center; padding: 0 20px;
+}
+
+.result-xp {
+  background: var(--yellow);
+  color: #7a5500;
+  font-size: 20px;
+  font-weight: 900;
+  padding: 12px 32px;
+  border-radius: 20px;
+  box-shadow: 0 4px 0 var(--yellow-dark);
+}
+
+.btn-primary {
+  width: 100%;
+  max-width: 340px;
+  padding: 18px;
+  background: var(--green);
+  color: white;
+  border: none;
+  border-radius: var(--radius);
+  font-size: 19px;
+  font-weight: 900;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  box-shadow: 0 5px 0 var(--green-shadow);
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+.btn-primary:active { transform: translateY(3px); box-shadow: 0 2px 0 var(--green-shadow); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--blue);
+  border: 3px solid var(--blue);
+  border-radius: var(--radius);
+  font-size: 16px;
+  font-weight: 800;
+  font-family: 'Nunito', sans-serif;
+  cursor: pointer;
+  padding: 14px 28px;
+  width: 100%; max-width: 340px;
+  transition: background 0.15s;
+}
+.btn-secondary:active { background: #e8f6ff; }
+
+/* Confetti */
+.confetti-wrap { position: fixed; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; z-index: 999; }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-
-<h1>🦉 English Saber Kids</h1>
-
-<div class="progress">
-  <div class="progress-bar" id="progressBar"></div>
+<!-- ===== LOGIN ===== -->
+<div id="loginScreen" class="screen active">
+  <div class="login-card">
+    <div class="logo-owl">🦉</div>
+    <div class="login-title">English Saber Kids</div>
+    <div class="login-sub">¡Aprende inglés jugando!</div>
+    <input type="text" class="name-input" id="playerName" placeholder="¿Cómo te llamas?" maxlength="20" autocomplete="off" />
+    <button class="btn-start" onclick="startApp()">¡Jugar ahora! 🚀</button>
+  </div>
 </div>
 
-<div id="map"></div>
-<div id="quiz" class="card hidden"></div>
+<!-- ===== MAP ===== -->
+<div id="mapScreen" class="screen">
+  <div class="top-bar">
+    <div class="greeting" id="greetingText">¡Hola!</div>
+    <div class="xp-badge" id="xpBadge">⭐ 0 XP</div>
+  </div>
 
+  <div class="section-title">Tu camino de aprendizaje</div>
+
+  <div class="level-card" id="card1" onclick="startLevel(1)">
+    <div class="level-icon">📖</div>
+    <div class="level-info">
+      <div class="level-name">Nivel 1 – Vocabulario</div>
+      <div class="level-desc">Palabras básicas en inglés</div>
+      <div class="stars-row" id="stars1">
+        <span class="star">⭐</span><span class="star">⭐</span><span class="star">⭐</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="level-card locked" id="card2" onclick="startLevel(2)">
+    <div class="level-icon">✏️</div>
+    <div class="level-info">
+      <div class="level-name">Nivel 2 – Gramática</div>
+      <div class="level-desc">Verbos to be y presente</div>
+      <div class="stars-row" id="stars2">
+        <span class="star">☆</span><span class="star">☆</span><span class="star">☆</span>
+      </div>
+    </div>
+    <div class="lock-icon" id="lock2">🔒</div>
+  </div>
+
+  <div class="level-card locked" id="card3" onclick="startLevel(3)">
+    <div class="level-icon">🧩</div>
+    <div class="level-info">
+      <div class="level-name">Nivel 3 – Comprensión</div>
+      <div class="level-desc">Oraciones y contexto</div>
+      <div class="stars-row" id="stars3">
+        <span class="star">☆</span><span class="star">☆</span><span class="star">☆</span>
+      </div>
+    </div>
+    <div class="lock-icon" id="lock3">🔒</div>
+  </div>
+
+  <div class="level-card locked" id="card4" onclick="startLevel(4)">
+    <div class="level-icon">🎧</div>
+    <div class="level-info">
+      <div class="level-name">Nivel 4 – Escucha</div>
+      <div class="level-desc">Comprensión auditiva</div>
+      <div class="stars-row" id="stars4">
+        <span class="star">☆</span><span class="star">☆</span><span class="star">☆</span>
+      </div>
+    </div>
+    <div class="lock-icon" id="lock4">🔒</div>
+  </div>
 </div>
+
+<!-- ===== QUIZ ===== -->
+<div id="quizScreen" class="screen">
+  <div class="quiz-header">
+    <button class="close-btn" onclick="goMap()">✕</button>
+    <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+    <div class="hearts" id="heartsDisplay">❤️❤️❤️</div>
+  </div>
+  <div class="question-card" id="questionCard"></div>
+  <div class="options-grid" id="optionsGrid"></div>
+  <div class="feedback-bar" id="feedbackBar">
+    <div class="feedback-title" id="feedbackTitle"></div>
+    <div class="feedback-sub" id="feedbackSub"></div>
+  </div>
+</div>
+
+<!-- ===== RESULT ===== -->
+<div id="resultScreen" class="screen">
+  <div class="result-owl" id="resultOwl">🦉</div>
+  <div class="result-title" id="resultTitle">¡Bien hecho!</div>
+  <div class="result-score-ring" id="scoreRing">
+    <div class="result-score-inner">
+      <div class="score-num" id="scoreNum">0</div>
+      <div class="score-denom" id="scoreDenom">de 10</div>
+    </div>
+  </div>
+  <div class="result-msg" id="resultMsg"></div>
+  <div class="result-xp" id="resultXp">+50 XP</div>
+  <button class="btn-primary" id="btnContinue" onclick="goMap()">Continuar 🗺️</button>
+  <button class="btn-secondary" id="btnRetry" onclick="retryLevel()">Reintentar 🔄</button>
+</div>
+
+<div class="confetti-wrap" id="confettiWrap"></div>
 
 <script>
-
-// 🔥 CONFIG
-let unlockedLevel = 1;
-let currentLevel = 1;
-let current = 0;
-let score = 0;
-let used = {1:[],2:[],3:[],4:[]};
-
-// 🧠 BANCO (100 preguntas distribuidas)
-const levels = {
+// ============================================================
+// BANCO DE PREGUNTAS — 40 por nivel = 160 totales
+// ============================================================
+const ALL_LEVELS = {
 
 1: [
-{q:"Dog means:", options:["Gato","Perro","Ave"], correct:1},
-{q:"Apple is a:", options:["Fruit","Animal","Color"], correct:0},
-{q:"Blue is:", options:["Color","Food","Animal"], correct:0},
-{q:"Chair means:", options:["Mesa","Silla","Puerta"], correct:1},
-{q:"Milk is:", options:["Drink","Animal","Color"], correct:0},
-{q:"Car is:", options:["Vehicle","Fruit","Animal"], correct:0},
-{q:"Teacher means:", options:["Doctor","Profesor","Policía"], correct:1},
-{q:"House means:", options:["Casa","Escuela","Calle"], correct:0},
-{q:"Book means:", options:["Libro","Mesa","Lápiz"], correct:0},
-{q:"Water is:", options:["Drink","Animal","Color"], correct:0}
+  {q:"'Dog' means:", options:["Gato","Perro","Ave"], correct:1},
+  {q:"'Apple' is a:", options:["Fruit","Animal","Color"], correct:0},
+  {q:"'Blue' is a:", options:["Color","Food","Animal"], correct:0},
+  {q:"'Chair' means:", options:["Mesa","Silla","Puerta"], correct:1},
+  {q:"'Milk' is a:", options:["Drink","Animal","Color"], correct:0},
+  {q:"'Car' is a:", options:["Vehicle","Fruit","Animal"], correct:0},
+  {q:"'Teacher' means:", options:["Doctor","Profesor","Policía"], correct:1},
+  {q:"'House' means:", options:["Casa","Escuela","Calle"], correct:0},
+  {q:"'Book' means:", options:["Libro","Mesa","Lápiz"], correct:0},
+  {q:"'Water' is a:", options:["Drink","Animal","Color"], correct:0},
+  {q:"'Sun' means:", options:["Luna","Sol","Estrella"], correct:1},
+  {q:"'Cat' means:", options:["Perro","Gato","Pez"], correct:1},
+  {q:"'Tree' means:", options:["Flor","Árbol","Hoja"], correct:1},
+  {q:"'Happy' means:", options:["Triste","Enojado","Feliz"], correct:2},
+  {q:"'School' means:", options:["Casa","Escuela","Tienda"], correct:1},
+  {q:"'Red' is a:", options:["Color","Fruit","Animal"], correct:0},
+  {q:"'Bird' means:", options:["Pez","Pájaro","Sapo"], correct:1},
+  {q:"'Ball' means:", options:["Pelota","Mesa","Carro"], correct:0},
+  {q:"'Bread' means:", options:["Leche","Pan","Agua"], correct:1},
+  {q:"'Run' means:", options:["Saltar","Correr","Dormir"], correct:1},
+  {q:"'Big' means:", options:["Grande","Pequeño","Redondo"], correct:0},
+  {q:"'Pencil' means:", options:["Regla","Cuaderno","Lápiz"], correct:2},
+  {q:"'Night' means:", options:["Día","Noche","Tarde"], correct:1},
+  {q:"'Hand' means:", options:["Pie","Cabeza","Mano"], correct:2},
+  {q:"'Fish' means:", options:["Pez","Gato","Perro"], correct:0},
+  {q:"'Flower' means:", options:["Árbol","Flor","Hierba"], correct:1},
+  {q:"'Orange' the fruit means:", options:["Naranja","Manzana","Uva"], correct:0},
+  {q:"'Fast' means:", options:["Lento","Rápido","Alto"], correct:1},
+  {q:"'Door' means:", options:["Ventana","Puerta","Pared"], correct:1},
+  {q:"'Sleep' means:", options:["Comer","Dormir","Jugar"], correct:1},
+  {q:"'White' is a:", options:["Color","Food","Animal"], correct:0},
+  {q:"'Friend' means:", options:["Enemigo","Amigo","Maestro"], correct:1},
+  {q:"'Eat' means:", options:["Beber","Comer","Saltar"], correct:1},
+  {q:"'Star' means:", options:["Luna","Nube","Estrella"], correct:2},
+  {q:"'Baby' means:", options:["Niño grande","Bebé","Abuelo"], correct:1},
+  {q:"'Small' means:", options:["Grande","Pequeño","Mediano"], correct:1},
+  {q:"'Rain' means:", options:["Sol","Lluvia","Nieve"], correct:1},
+  {q:"'Table' means:", options:["Silla","Mesa","Cama"], correct:1},
+  {q:"'Nose' means:", options:["Ojo","Oreja","Nariz"], correct:2},
+  {q:"'Jump' means:", options:["Saltar","Nadar","Volar"], correct:0}
 ],
 
 2: [
-{q:"She ___ my friend", options:["is","are","am"], correct:0},
-{q:"They ___ playing", options:["is","are","am"], correct:1},
-{q:"I ___ happy", options:["is","am","are"], correct:1},
-{q:"He ___ a student", options:["is","are","am"], correct:0},
-{q:"We ___ ready", options:["is","are","am"], correct:1},
-{q:"The cat ___ on the table", options:["is","are","am"], correct:0},
-{q:"She ___ reading", options:["is","are","am"], correct:0},
-{q:"They ___ my friends", options:["is","are","am"], correct:1},
-{q:"I ___ a boy", options:["is","am","are"], correct:1},
-{q:"He ___ tall", options:["is","are","am"], correct:0}
+  {q:"She ___ my friend", options:["is","are","am"], correct:0},
+  {q:"They ___ playing", options:["is","are","am"], correct:1},
+  {q:"I ___ happy", options:["is","am","are"], correct:1},
+  {q:"He ___ a student", options:["is","are","am"], correct:0},
+  {q:"We ___ ready", options:["is","are","am"], correct:1},
+  {q:"The cat ___ on the table", options:["is","are","am"], correct:0},
+  {q:"She ___ reading", options:["is","are","am"], correct:0},
+  {q:"They ___ my friends", options:["is","are","am"], correct:1},
+  {q:"I ___ a girl", options:["is","am","are"], correct:1},
+  {q:"He ___ tall", options:["is","are","am"], correct:0},
+  {q:"You ___ my teacher", options:["is","are","am"], correct:1},
+  {q:"The dogs ___ big", options:["is","are","am"], correct:1},
+  {q:"It ___ raining", options:["is","are","am"], correct:0},
+  {q:"We ___ students", options:["is","are","am"], correct:1},
+  {q:"I ___ not tired", options:["is","am","are"], correct:1},
+  {q:"The book ___ red", options:["is","are","am"], correct:0},
+  {q:"They ___ at school", options:["is","are","am"], correct:1},
+  {q:"She ___ eight years old", options:["is","are","am"], correct:0},
+  {q:"The children ___ happy", options:["is","are","am"], correct:1},
+  {q:"I ___ from Colombia", options:["is","am","are"], correct:1},
+  {q:"He ___ not here", options:["is","are","am"], correct:0},
+  {q:"We ___ eating lunch", options:["is","are","am"], correct:1},
+  {q:"You ___ very smart", options:["is","are","am"], correct:1},
+  {q:"The flowers ___ beautiful", options:["is","are","am"], correct:1},
+  {q:"It ___ a sunny day", options:["is","are","am"], correct:0},
+  {q:"I ___ learning English", options:["is","am","are"], correct:1},
+  {q:"My mom ___ a doctor", options:["is","are","am"], correct:0},
+  {q:"They ___ watching TV", options:["is","are","am"], correct:1},
+  {q:"The bird ___ singing", options:["is","are","am"], correct:0},
+  {q:"We ___ best friends", options:["is","are","am"], correct:1},
+  {q:"She ___ not sleeping", options:["is","are","am"], correct:0},
+  {q:"I ___ playing soccer", options:["is","am","are"], correct:1},
+  {q:"The boys ___ running", options:["is","are","am"], correct:1},
+  {q:"He ___ my brother", options:["is","are","am"], correct:0},
+  {q:"You ___ right!", options:["is","are","am"], correct:1},
+  {q:"The apple ___ green", options:["is","are","am"], correct:0},
+  {q:"They ___ in the park", options:["is","are","am"], correct:1},
+  {q:"I ___ not afraid", options:["is","am","are"], correct:1},
+  {q:"The dogs ___ barking", options:["is","are","am"], correct:1},
+  {q:"She ___ very kind", options:["is","are","am"], correct:0}
 ],
 
 3: [
-{q:"The dog is brown. What color?", options:["Black","Brown","White"], correct:1},
-{q:"The cat is on the table. Where is it?", options:["Chair","Table","Floor"], correct:1},
-{q:"She reads a book. What does she do?", options:["Sleep","Read","Run"], correct:1},
-{q:"He eats an apple. What is he doing?", options:["Eating","Running","Sleeping"], correct:0},
-{q:"The boy is in the park. Where is he?", options:["School","Park","House"], correct:1},
-{q:"The girl is happy. How is she?", options:["Sad","Happy","Angry"], correct:1},
-{q:"The dog runs. What does it do?", options:["Run","Eat","Sleep"], correct:0},
-{q:"The book is on the table. Where is it?", options:["Table","Chair","Floor"], correct:0},
-{q:"The cat sleeps. What is it doing?", options:["Sleeping","Eating","Running"], correct:0},
-{q:"The boy reads. What does he do?", options:["Read","Run","Jump"], correct:0}
+  {q:"The dog is brown. What color?", options:["Black","Brown","White"], correct:1},
+  {q:"The cat is on the table. Where?", options:["Chair","Table","Floor"], correct:1},
+  {q:"She reads a book. What does she do?", options:["Sleep","Read","Run"], correct:1},
+  {q:"He eats an apple. What is he doing?", options:["Eating","Running","Sleeping"], correct:0},
+  {q:"The boy is in the park. Where?", options:["School","Park","House"], correct:1},
+  {q:"The girl is happy. How is she?", options:["Sad","Happy","Angry"], correct:1},
+  {q:"The dog runs fast. What does it do?", options:["Run","Eat","Sleep"], correct:0},
+  {q:"The book is on the table. Where?", options:["Table","Chair","Floor"], correct:0},
+  {q:"The cat sleeps. What is it doing?", options:["Sleeping","Eating","Running"], correct:0},
+  {q:"The boy reads. What does he do?", options:["Read","Run","Jump"], correct:0},
+  {q:"The sky is blue. What color?", options:["Green","Red","Blue"], correct:2},
+  {q:"She drinks water. What does she drink?", options:["Juice","Milk","Water"], correct:2},
+  {q:"He is six years old. How old?", options:["5","6","7"], correct:1},
+  {q:"The house is big. How is it?", options:["Small","Big","Old"], correct:1},
+  {q:"They play soccer. What sport?", options:["Tennis","Soccer","Basketball"], correct:1},
+  {q:"It is raining. What is the weather?", options:["Sunny","Rainy","Cloudy"], correct:1},
+  {q:"The bird is in the tree. Where?", options:["Tree","House","Table"], correct:0},
+  {q:"She has two cats. How many cats?", options:["One","Two","Three"], correct:1},
+  {q:"The pencil is yellow. What color?", options:["Blue","Yellow","Red"], correct:1},
+  {q:"He walks to school. How does he go?", options:["By car","By bike","Walking"], correct:2},
+  {q:"The baby is sleeping. What is it doing?", options:["Crying","Sleeping","Playing"], correct:1},
+  {q:"The fish is in the water. Where?", options:["Land","Water","Sky"], correct:1},
+  {q:"She is wearing a red dress. What color?", options:["Blue","Green","Red"], correct:2},
+  {q:"The dog is big and black. What color?", options:["White","Brown","Black"], correct:2},
+  {q:"He eats in the kitchen. Where?", options:["Bedroom","Kitchen","Garden"], correct:1},
+  {q:"The class starts at 8. When?", options:["7 o'clock","8 o'clock","9 o'clock"], correct:1},
+  {q:"She likes to draw. What does she like?", options:["Singing","Drawing","Dancing"], correct:1},
+  {q:"The sun rises in the morning. When?", options:["Night","Afternoon","Morning"], correct:2},
+  {q:"There are three dogs. How many?", options:["Two","Three","Four"], correct:1},
+  {q:"He is wearing blue shoes. What color?", options:["Red","Green","Blue"], correct:2},
+  {q:"The girl runs to the park. Where?", options:["School","Store","Park"], correct:2},
+  {q:"They eat pizza. What do they eat?", options:["Pasta","Pizza","Rice"], correct:1},
+  {q:"The cat is small and white. How?", options:["Big","Small","Tall"], correct:1},
+  {q:"She sings every day. What does she do?", options:["Dance","Sing","Paint"], correct:1},
+  {q:"The frog is green. What color?", options:["Green","Blue","Yellow"], correct:0},
+  {q:"He swims in the pool. Where?", options:["River","Sea","Pool"], correct:2},
+  {q:"The toy is on the floor. Where?", options:["Shelf","Floor","Table"], correct:1},
+  {q:"She is tired. How does she feel?", options:["Happy","Excited","Tired"], correct:2},
+  {q:"They go to bed at night. When?", options:["Morning","Afternoon","Night"], correct:2},
+  {q:"The apple is sweet. How does it taste?", options:["Sour","Bitter","Sweet"], correct:2}
 ],
 
 4: [
-{type:"listening", audio:"The dog is black", q:"What color is the dog?", options:["White","Black","Brown"], correct:1},
-{type:"listening", audio:"She is my teacher", q:"Who is she?", options:["Friend","Teacher","Sister"], correct:1},
-{type:"listening", audio:"The boy is running", q:"What is he doing?", options:["Eating","Running","Sleeping"], correct:1},
-{type:"listening", audio:"The cat is on the table", q:"Where is the cat?", options:["Table","Chair","Floor"], correct:0},
-{type:"listening", audio:"The girl is happy", q:"How is she?", options:["Sad","Happy","Angry"], correct:1},
-{type:"listening", audio:"The boy eats an apple", q:"What is he doing?", options:["Eating","Running","Sleeping"], correct:0},
-{type:"listening", audio:"The dog is big", q:"How is the dog?", options:["Big","Small","Fast"], correct:0},
-{type:"listening", audio:"The teacher is here", q:"Who is here?", options:["Student","Teacher","Friend"], correct:1},
-{type:"listening", audio:"The car is red", q:"What color is the car?", options:["Blue","Red","Black"], correct:1},
-{type:"listening", audio:"The boy is in school", q:"Where is the boy?", options:["Park","School","Home"], correct:1}
+  {type:"listening", audio:"The dog is black", q:"What color is the dog?", options:["White","Black","Brown"], correct:1},
+  {type:"listening", audio:"She is my teacher", q:"Who is she?", options:["Friend","Teacher","Sister"], correct:1},
+  {type:"listening", audio:"The boy is running", q:"What is he doing?", options:["Eating","Running","Sleeping"], correct:1},
+  {type:"listening", audio:"The cat is on the table", q:"Where is the cat?", options:["Table","Chair","Floor"], correct:0},
+  {type:"listening", audio:"The girl is happy", q:"How is she?", options:["Sad","Happy","Angry"], correct:1},
+  {type:"listening", audio:"The boy eats an apple", q:"What is he doing?", options:["Eating","Running","Sleeping"], correct:0},
+  {type:"listening", audio:"The dog is very big", q:"How is the dog?", options:["Big","Small","Fast"], correct:0},
+  {type:"listening", audio:"The teacher is here", q:"Who is here?", options:["Student","Teacher","Friend"], correct:1},
+  {type:"listening", audio:"The car is red", q:"What color is the car?", options:["Blue","Red","Black"], correct:1},
+  {type:"listening", audio:"The boy is in school", q:"Where is the boy?", options:["Park","School","Home"], correct:1},
+  {type:"listening", audio:"She drinks milk", q:"What does she drink?", options:["Water","Juice","Milk"], correct:2},
+  {type:"listening", audio:"He has three books", q:"How many books?", options:["Two","Three","Four"], correct:1},
+  {type:"listening", audio:"The sky is blue today", q:"What color is the sky?", options:["Gray","Blue","White"], correct:1},
+  {type:"listening", audio:"They are playing soccer", q:"What are they doing?", options:["Playing","Studying","Eating"], correct:0},
+  {type:"listening", audio:"The bird is in the tree", q:"Where is the bird?", options:["Ground","Tree","Sky"], correct:1},
+  {type:"listening", audio:"My mom is a doctor", q:"What is mom?", options:["Nurse","Teacher","Doctor"], correct:2},
+  {type:"listening", audio:"It is raining outside", q:"What is the weather?", options:["Sunny","Windy","Rainy"], correct:2},
+  {type:"listening", audio:"The baby is sleeping", q:"What is the baby doing?", options:["Sleeping","Crying","Eating"], correct:0},
+  {type:"listening", audio:"She likes to sing", q:"What does she like?", options:["Draw","Sing","Dance"], correct:1},
+  {type:"listening", audio:"The apple is sweet and red", q:"What color is the apple?", options:["Green","Yellow","Red"], correct:2},
+  {type:"listening", audio:"He walks to the park", q:"Where does he go?", options:["School","Store","Park"], correct:2},
+  {type:"listening", audio:"The fish is in the water", q:"Where is the fish?", options:["Land","Water","Sky"], correct:1},
+  {type:"listening", audio:"She has a yellow pencil", q:"What color is the pencil?", options:["Blue","Red","Yellow"], correct:2},
+  {type:"listening", audio:"They eat breakfast in the morning", q:"When do they eat breakfast?", options:["Morning","Night","Afternoon"], correct:0},
+  {type:"listening", audio:"The cat is small and white", q:"What color is the cat?", options:["Black","White","Gray"], correct:1},
+  {type:"listening", audio:"He is reading a big book", q:"What is he doing?", options:["Writing","Drawing","Reading"], correct:2},
+  {type:"listening", audio:"The flower is beautiful", q:"How is the flower?", options:["Ugly","Beautiful","Old"], correct:1},
+  {type:"listening", audio:"She jumps over the puddle", q:"What does she do?", options:["Run","Jump","Swim"], correct:1},
+  {type:"listening", audio:"The house has three windows", q:"How many windows?", options:["Two","Four","Three"], correct:2},
+  {type:"listening", audio:"My friend is very funny", q:"How is the friend?", options:["Serious","Funny","Sad"], correct:1},
+  {type:"listening", audio:"The dog runs in the garden", q:"Where does the dog run?", options:["Park","Street","Garden"], correct:2},
+  {type:"listening", audio:"She wears a green hat", q:"What color is the hat?", options:["Green","Blue","Red"], correct:0},
+  {type:"listening", audio:"He plays the guitar", q:"What does he play?", options:["Piano","Drums","Guitar"], correct:2},
+  {type:"listening", audio:"The children are laughing", q:"What are they doing?", options:["Crying","Sleeping","Laughing"], correct:2},
+  {type:"listening", audio:"It is cold in winter", q:"What season is cold?", options:["Summer","Autumn","Winter"], correct:2},
+  {type:"listening", audio:"She draws a big circle", q:"What does she draw?", options:["Square","Triangle","Circle"], correct:2},
+  {type:"listening", audio:"The boy likes cookies", q:"What does the boy like?", options:["Cake","Cookies","Candy"], correct:1},
+  {type:"listening", audio:"They swim in the pool", q:"Where do they swim?", options:["Sea","River","Pool"], correct:2},
+  {type:"listening", audio:"The star is very bright", q:"How is the star?", options:["Dark","Dim","Bright"], correct:2},
+  {type:"listening", audio:"She goes to bed early", q:"What does she do early?", options:["Wake up","Eat","Go to bed"], correct:2}
 ]
-
 };
 
-// 🎮 MAPA
-function renderMap(){
-  let html="";
-  for(let i=1;i<=4;i++){
-    let lock=i>unlockedLevel?"locked":"";
-    html+=`<div class="level ${lock}" onclick="startLevel(${i})">Nivel ${i}</div>`;
-  }
-  document.getElementById("map").innerHTML=html;
+// ============================================================
+// STATE
+// ============================================================
+let playerName = "";
+let totalXP = 0;
+let unlockedLevel = 1;
+let levelStars = {1:0, 2:0, 3:0, 4:0};
+
+let currentLevel = 1;
+let questionsThisRound = [];
+let current = 0;
+let score = 0;
+let hearts = 3;
+let usedIndices = {1:[], 2:[], 3:[], 4:[]};
+
+const QUESTIONS_PER_ROUND = 10;
+
+// ============================================================
+// SCREENS
+// ============================================================
+function show(id){ document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active')); document.getElementById(id).classList.add('active'); window.scrollTo(0,0); }
+
+// ============================================================
+// LOGIN
+// ============================================================
+document.getElementById('playerName').addEventListener('keypress', e => { if(e.key==='Enter') startApp(); });
+
+function startApp(){
+  let n = document.getElementById('playerName').value.trim();
+  if(!n){ document.getElementById('playerName').focus(); document.getElementById('playerName').style.borderColor='var(--red)'; return; }
+  playerName = n;
+  document.getElementById('greetingText').textContent = `¡Hola, ${playerName}! 👋`;
+  document.getElementById('xpBadge').textContent = `⭐ ${totalXP} XP`;
+  renderMap();
+  show('mapScreen');
 }
 
+// ============================================================
+// MAP
+// ============================================================
+function renderMap(){
+  for(let i=1;i<=4;i++){
+    let card = document.getElementById('card'+i);
+    let lock = document.getElementById('lock'+i);
+    let starsEl = document.getElementById('stars'+i);
+    let s = levelStars[i];
+
+    if(i<=unlockedLevel){
+      card.classList.remove('locked');
+      if(lock) lock.style.display='none';
+    } else {
+      card.classList.add('locked');
+      if(lock) lock.style.display='block';
+    }
+
+    // Stars
+    let starStr = '';
+    for(let j=0;j<3;j++) starStr += `<span class="star">${j<s?'⭐':'☆'}</span>`;
+    starsEl.innerHTML = starStr;
+  }
+  document.getElementById('xpBadge').textContent = `⭐ ${totalXP} XP`;
+}
+
+// ============================================================
+// LEVEL START
+// ============================================================
 function startLevel(l){
-  if(l>unlockedLevel)return;
-  currentLevel=l; current=0; score=0;
-  document.getElementById("quiz").classList.remove("hidden");
+  if(l > unlockedLevel) return;
+  currentLevel = l;
+  questionsThisRound = pickQuestions(l, QUESTIONS_PER_ROUND);
+  current = 0;
+  score = 0;
+  hearts = 3;
+  show('quizScreen');
   loadQuestion();
 }
 
-// 🧠 SIN REPETIR
-function getQuestion(){
-  let list=levels[currentLevel];
-  if(used[currentLevel].length===list.length) used[currentLevel]=[];
-  let available=list.filter((_,i)=>!used[currentLevel].includes(i));
-  let index=Math.floor(Math.random()*available.length);
-  let q=available[index];
-  let realIndex=list.indexOf(q);
-  used[currentLevel].push(realIndex);
-  return q;
+function pickQuestions(level, n){
+  let bank = ALL_LEVELS[level];
+  let used = usedIndices[level];
+  if(used.length + n > bank.length) used = usedIndices[level] = [];
+  let available = bank.map((_,i)=>i).filter(i=>!used.includes(i));
+  // shuffle
+  for(let i=available.length-1;i>0;i--){ let j=Math.floor(Math.random()*(i+1)); [available[i],available[j]]=[available[j],available[i]]; }
+  let chosen = available.slice(0,n);
+  usedIndices[level].push(...chosen);
+  return chosen.map(i=>bank[i]);
 }
 
+// ============================================================
+// QUESTION
+// ============================================================
 function loadQuestion(){
-  let q=getQuestion();
-  window.currentQ=q;
+  let q = questionsThisRound[current];
+  updateProgress();
+  updateHearts();
 
-  let html=`<h3>Nivel ${currentLevel}</h3><h2>${q.q}</h2>`;
-
-  if(q.type==="listening"){
-    html+=`<button class="btn correct" onclick="speak('${q.audio}')">🔊 Escuchar</button>`;
+  // question card
+  let badge = q.type==='listening' ? '🎧 Escucha' : `Pregunta ${current+1} de ${QUESTIONS_PER_ROUND}`;
+  let html = `<div class="q-badge">${badge}</div><div class="q-text">${q.q}</div>`;
+  if(q.type==='listening'){
+    html += `<button class="listen-btn" onclick="speak('${q.audio}')">🔊 Escuchar</button>`;
     speak(q.audio);
   }
+  document.getElementById('questionCard').innerHTML = html;
 
+  // options
+  let letters = ['A','B','C','D'];
+  let opts = '';
   q.options.forEach((opt,i)=>{
-    html+=`<button class="btn option" onclick="answer(this,${i})">${opt}</button>`;
+    opts += `<button class="option-btn" onclick="answer(this,${i})"><span class="opt-letter">${letters[i]}</span>${opt}</button>`;
   });
+  document.getElementById('optionsGrid').innerHTML = opts;
 
-  document.getElementById("quiz").innerHTML=html;
+  // hide feedback
+  let fb = document.getElementById('feedbackBar');
+  fb.className = 'feedback-bar';
 }
 
-function answer(btn,i){
-  if(i===currentQ.correct){
-    btn.classList.add("correct"); score++;
-  } else btn.classList.add("wrong");
+function updateProgress(){
+  let pct = (current/QUESTIONS_PER_ROUND)*100;
+  document.getElementById('progressFill').style.width = pct+'%';
+}
+
+function updateHearts(){
+  let h=''; for(let i=0;i<hearts;i++) h+='❤️'; for(let i=hearts;i<3;i++) h+='🖤';
+  document.getElementById('heartsDisplay').textContent = h;
+}
+
+// ============================================================
+// ANSWER
+// ============================================================
+function answer(btn, i){
+  let q = questionsThisRound[current];
+  let allBtns = document.querySelectorAll('.option-btn');
+  allBtns.forEach(b=>b.classList.add('disabled'));
+
+  let fb = document.getElementById('feedbackBar');
+
+  if(i === q.correct){
+    btn.classList.add('correct');
+    score++;
+    fb.className = 'feedback-bar ok show';
+    document.getElementById('feedbackTitle').textContent = randomPositive();
+    document.getElementById('feedbackSub').textContent = '';
+  } else {
+    btn.classList.add('wrong');
+    allBtns[q.correct].classList.add('correct');
+    hearts = Math.max(0, hearts-1);
+    updateHearts();
+    fb.className = 'feedback-bar fail show';
+    document.getElementById('feedbackTitle').textContent = '¡Casi! La respuesta era: '+q.options[q.correct];
+    document.getElementById('feedbackSub').textContent = 'No te preocupes, ¡sigue intentando!';
+  }
 
   current++;
   updateProgress();
 
   setTimeout(()=>{
-    if(current<10) loadQuestion();
+    if(current < QUESTIONS_PER_ROUND && hearts > 0) loadQuestion();
     else finishLevel();
-  },700);
+  }, 1100);
 }
 
-function updateProgress(){
-  let p=(current/10)*100;
-  document.getElementById("progressBar").style.width=p+"%";
+function randomPositive(){
+  let msgs = ['¡Excelente! 🎉','¡Correcto! ✅','¡Genial! 🌟','¡Perfecto! 🏆','¡Muy bien! 💪','¡Increíble! 🦉'];
+  return msgs[Math.floor(Math.random()*msgs.length)];
 }
 
+// ============================================================
+// FINISH
+// ============================================================
 function finishLevel(){
-  if(score>=7) unlockedLevel++;
-  document.getElementById("quiz").innerHTML=
-    `<h2>Resultado</h2><p>${score}/10</p>`;
+  let pct = score/QUESTIONS_PER_ROUND;
+  let stars = pct>=0.9 ? 3 : pct>=0.7 ? 2 : pct>=0.5 ? 1 : 0;
+  let xpEarned = score * 10;
+  totalXP += xpEarned;
+
+  // Update records
+  if(stars > levelStars[currentLevel]) levelStars[currentLevel] = stars;
+  if(stars >= 1 && currentLevel === unlockedLevel && unlockedLevel < 4) unlockedLevel++;
+
+  // Score ring gradient
+  let deg = Math.round((score/QUESTIONS_PER_ROUND)*360);
+  document.getElementById('scoreRing').style.background =
+    `conic-gradient(var(--green) ${deg}deg, var(--gray) ${deg}deg)`;
+  document.getElementById('scoreNum').textContent = score;
+  document.getElementById('scoreDenom').textContent = `de ${QUESTIONS_PER_ROUND}`;
+
+  // Messages
+  let titles = ['¡Sigue practicando!','¡Buen intento!','¡Bien hecho!','¡Excelente! 🌟'];
+  let msgs = [
+    `${playerName}, no te rindas. ¡Tú puedes lograrlo!`,
+    `¡Casi! Con un poco más de práctica lo logras, ${playerName}.`,
+    `¡Muy bien, ${playerName}! Estás aprendiendo inglés 🎉`,
+    `¡Eres increíble, ${playerName}! ¡Nivel superado con 3 estrellas! 🏆`
+  ];
+  document.getElementById('resultOwl').textContent = stars===3?'🏆':stars>=1?'🎉':'😅';
+  document.getElementById('resultTitle').textContent = titles[stars];
+  document.getElementById('resultMsg').textContent = msgs[stars];
+  document.getElementById('resultXp').textContent = `+${xpEarned} XP`;
+  document.getElementById('btnRetry').style.display = stars<3?'block':'none';
+
+  if(stars>=2) launchConfetti();
+
   renderMap();
+  show('resultScreen');
 }
 
+// ============================================================
+// NAV
+// ============================================================
+function goMap(){ show('mapScreen'); }
+function retryLevel(){ startLevel(currentLevel); }
+
+// ============================================================
+// TTS
+// ============================================================
 function speak(t){
-  let msg=new SpeechSynthesisUtterance(t);
-  msg.lang="en-US";
+  speechSynthesis.cancel();
+  let msg = new SpeechSynthesisUtterance(t);
+  msg.lang = "en-US"; msg.rate = 0.85;
   speechSynthesis.speak(msg);
 }
 
-renderMap();
-
+// ============================================================
+// CONFETTI
+// ============================================================
+function launchConfetti(){
+  let wrap = document.getElementById('confettiWrap');
+  wrap.innerHTML = '';
+  let colors = ['#58cc02','#ffc800','#ff4b4b','#1cb0f6','#ce82ff','#ff9600'];
+  for(let i=0;i<60;i++){
+    let c = document.createElement('div');
+    let color = colors[Math.floor(Math.random()*colors.length)];
+    let size = 8+Math.random()*8;
+    let left = Math.random()*100;
+    let delay = Math.random()*1.2;
+    let duration = 1.5+Math.random()*1.5;
+    c.style.cssText = `position:absolute;top:-20px;left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${Math.random()>0.5?'50%':'2px'};animation:fall ${duration}s ${delay}s forwards;opacity:1;`;
+    wrap.appendChild(c);
+  }
+  if(!document.getElementById('confettiStyle')){
+    let s=document.createElement('style'); s.id='confettiStyle';
+    s.textContent=`@keyframes fall{0%{transform:translateY(0) rotate(0);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}`;
+    document.head.appendChild(s);
+  }
+  setTimeout(()=>wrap.innerHTML='', 4000);
+}
 </script>
 </body>
 </html>
