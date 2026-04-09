@@ -4,6 +4,19 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>English Saber Kids PRO</title>
+
+  <!-- PWA Meta -->
+  <meta name="application-name" content="Saber Kids">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Saber Kids">
+  <meta name="theme-color" content="#58cc02">
+  <meta name="mobile-web-app-capable" content="yes">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192x192.png">
+  <link rel="manifest" href="./manifest.json">
+
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;800;900&display=swap" rel="stylesheet">
 
 <style>
@@ -976,5 +989,44 @@ function launchConfetti(){
   setTimeout(()=>wrap.innerHTML='', 4000);
 }
 </script>
+
+<!-- Install Banner -->
+<div id="installBanner" style="display:none;position:fixed;bottom:20px;left:50%;transform:translateX(-50%);z-index:1000;background:white;border-radius:18px;padding:14px 20px;box-shadow:0 8px 32px rgba(0,0,0,0.18);align-items:center;gap:14px;max-width:340px;width:90%;border:2px solid #58cc02;">
+  <img src="data:image/png;base64,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" style="width:44px;height:44px;border-radius:10px;" />
+  <div style="flex:1;font-family:'Nunito',sans-serif;">
+    <div style="font-weight:900;font-size:14px;color:#3c3c3c;">Instalar Saber Kids</div>
+    <div style="font-size:12px;color:#aaa;font-weight:700;">Juega sin internet 📲</div>
+  </div>
+  <button onclick="installApp()" style="background:#58cc02;color:white;border:none;border-radius:12px;padding:8px 16px;font-weight:900;font-family:'Nunito',sans-serif;font-size:13px;cursor:pointer;box-shadow:0 3px 0 #3e8c00;">Instalar</button>
+</div>
+
+
+<script>
+// Register Service Worker
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('./sw.js', {scope: './'}
+  ).then(r => console.log('SW registered')).catch(e => console.log('SW error', e));
+}
+// Install prompt
+let deferredPrompt;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('installBanner').style.display = 'flex';
+});
+window.addEventListener('appinstalled', () => {
+  document.getElementById('installBanner').style.display = 'none';
+});
+function installApp() {
+  if(deferredPrompt) {
+    deferredPrompt.prompt();
+    deferredPrompt.userChoice.then(() => {
+      deferredPrompt = null;
+      document.getElementById('installBanner').style.display = 'none';
+    });
+  }
+}
+</script>
+
 </body>
 </html>
