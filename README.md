@@ -1,2 +1,2 @@
 # app-English
-App para repasar ingres niños
+App para repasar ingles los niños
